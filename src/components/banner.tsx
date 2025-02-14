@@ -1,7 +1,10 @@
 import Carousel from "react-bootstrap/Carousel";
-import banner1 from '../assets/sliders/Banner-01.png';
+import banner1 from '../assets/sliders/Banner-01.jpg';
 import banner2 from '../assets/sliders/Banner-02.jpg';
 import banner3 from '../assets/sliders/Banner-03.jpg';
+import banner4 from '../assets/sliders/Banner-04.jpg';
+import banner5 from '../assets/sliders/Banner-05.jpg';
+import banner6 from '../assets/sliders/Banner-06.jpg';
 
 const Banner = () => {
   return (
@@ -44,27 +47,15 @@ const Banner = () => {
         </div>
       }
     >
-      <Carousel.Item>
-        <img
-          className="d-block w-100"
-          src={banner1}
-          alt="First slide"
-        />
-      </Carousel.Item>
-      <Carousel.Item>
-        <img
-          className="d-block w-100"
-          src={banner2}
-          alt="Second slide"
-        />
-      </Carousel.Item>
-      <Carousel.Item>
-        <img
-          className="d-block w-100"
-          src={banner3}
-          alt="Third slide"
-        />
-      </Carousel.Item>
+      {[banner1, banner2, banner3, banner4, banner5, banner6].map((banner, index) => (
+        <Carousel.Item key={index}>
+          <img
+            className="d-block w-100"
+            src={banner}
+            alt={`Slide ${index + 1}`}
+          />
+        </Carousel.Item>
+      ))}
     </Carousel>
   );
 };
