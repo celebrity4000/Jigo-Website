@@ -2,28 +2,52 @@ import React, { useContext, useState } from 'react'
 import { Trash, Heart } from 'lucide-react'
 import BreadCrumbs from '../components/BreadCrumbs'
 import { CartContext } from '../context';
-import { IMAGE_URL, instance } from '../helpers';
+import { IMAGE_URL, instance, sendEmail } from '../helpers';
 import { Link } from 'react-router-dom';
 
 function Cart() {
   const { cart, setCart } = useContext(CartContext);
   const [email, setEmail] = useState("");
+  const [number, setNumber] = useState<string>('');
+  const [loading, setLoading] = useState(false);
+
 
   const sendMail = async () => {
     if (!email) {
       alert("Enter email");
       return;
     }
-    const data = cart.map(item => item.name);
-    console.log(data);
+    setLoading(true);
 
-    const res = instance.post("/mail.php", {
-      address: email,
-      data: data
-    })
+    try {
+      const data = cart.map(item => item.name);
 
-    setCart([]);
-    alert("Order placed successfully");
+      const dataForSend = [];
+
+      cart.forEach(item => {
+        dataForSend.push({
+          name: item.name,
+          image: item.image[0],
+        })
+      })
+
+
+      const response = await sendEmail(email, number, dataForSend);
+
+      const res = instance.post("/mail.php", {
+        address: email,
+        data: data
+      })
+
+      setCart([]);
+      alert("Order placed successfully");
+    } catch (error) {
+      console.log(error);
+      alert("Something went wrong");
+
+    } finally {
+      setLoading(false);
+    }
 
   }
 
@@ -70,7 +94,16 @@ function Cart() {
 
         {
           cart.length == 0 ? <span className="text-sm text-center font-semibold text-gray-700">Your cart is empty</span>
-            : <input type='email' className='bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-4 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500' placeholder='Enter email' value={email} onChange={(e) => setEmail(e.target.value)} />
+            :
+            <div className="flex flex-col space-y-4">
+              <input type='email' className='bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-4 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500' placeholder='Enter email' value={email} onChange={(e) => setEmail(e.target.value)} />
+              <input type='text'
+                className='bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-4 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500'
+                placeholder='Enter number'
+                value={number}
+                maxLength={10}
+                onChange={(e) => setNumber(e.target.value.replace(/\D/g, ''))} />
+            </div>
         }
 
         <div className="flex justify-end space-x-4">
@@ -87,9 +120,10 @@ function Cart() {
             cart.length > 0 && <button
               type="button"
               onClick={sendMail}
+              disabled={loading}
               className="rounded-md border border-black px-3 py-2 text-sm font-semibold text-black shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
             >
-              Checkout
+              {loading ? "Checkout..." : "Checkout"}
             </button>
           }
         </div>
