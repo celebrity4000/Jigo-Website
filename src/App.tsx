@@ -18,7 +18,7 @@ import Category from './pages/categories/category'
 import ScrollToTop from "react-scroll-to-top";
 import { CartContext } from './context';
 import { useState } from 'react';
-import Popup from "./components/Popup";
+// import Popup from "./components/Popup";
 
 function App() {
   const [cart, setCart] = useState([]);
