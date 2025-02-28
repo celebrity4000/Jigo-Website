@@ -26,7 +26,7 @@ function App() {
     <div className="App">
       <CartContext.Provider value={{ cart, setCart }}>
         <Header />
-        <Popup />
+        {/* <Popup /> */}
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="about" element={<About />} />
